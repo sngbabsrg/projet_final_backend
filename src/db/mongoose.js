@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 
-// Charger les variables d'environnement depuis .env
-dotenv.config();
+const connectionURL = process.env.MONGODB_URI;
 
-mongoose.connect(process.env.MONGODB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-  .then(() => console.log("✅ Connecté à MongoDB"))
-  .catch((err) => console.error("❌ Erreur MongoDB :", err));
+console.log("MongoDB URI:", connectionURL);
+
+if (!connectionURL) {
+  throw new Error("MONGODB_URI is not defined in environment variables");
+}
+
+mongoose.connect(connectionURL).then(() => {
+  console.log("MongoDB connected");
+}).catch(err => {
+  console.error("MongoDB connection error:", err);
+});
