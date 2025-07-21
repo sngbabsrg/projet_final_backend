@@ -11,18 +11,29 @@ const taskRouter = require("./routers/task");
 const app = express();
 const port = process.env.PORT;
 
-app.use(cors());
-//! automatically parse incoming JSON to an OBJECT
+const allowedOrigins = ['https://projet-final-frontend-tan.vercel.app'];
+
+app.use(cors({
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true); // autoriser les requêtes sans origine (ex: Postman)
+    if(allowedOrigins.indexOf(origin) === -1){
+      const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
+
+
+// automatically parse incoming JSON to an OBJECT
 app.use(express.json());
-//*=======================================
-//! user routes
+
+// user routes
 app.use(userRouter);
-//*=======================================
-//! task routes
+
+// task routes
 app.use(taskRouter);
-//*=======================================
-
-
 
 app.listen(port, () => {
   console.log(`Server is up on port ${port}`);
